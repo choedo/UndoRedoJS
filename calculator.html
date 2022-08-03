@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>계산기 Undo Redo</title>
+    <link rel="stylesheet" href="./calculator.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="result"></h1>
+        <p><input id="inputBox" type="text" onkeyup="change()" /></p>
+        <ul class="btnBox">
+            <li><button onclick="undo()">Undo</button></li>
+            <li><button onclick="cal('plus')">+</button></li>
+            <li><button onclick="cal('minus')">-</button></li>
+            <li><button onclick="redo()">Redo</button></li>
+        </ul>
+    </div>
+
+    <script>
+        const result = document.getElementById('result');
+        let resultValue = 0;
+        let inputBox;
+        let resultArray = [0];
+        let i = 0;
+        let check = /^[0-9]+$/; // 숫자만 입력받는 정규식
+
+        result.innerHTML = resultValue;
+
+        function change() { // 인풋창에 키를 누를때마다 실행
+            inputBox = document.getElementById('inputBox').value;
+        }
+
+        function cal(a) {
+            if(inputBox == null) { // 아무것도 입력하지 않고 +,- 버튼 클릭 방지
+                alert('값을 입력해주세요');
+                return false;
+            }
+
+            if(!check.test(inputBox)) { // 숫자가 아닌 문자 입력 시 경고창
+                alert('숫자만 입럭해주세요!');
+                document.getElementById('inputBox').value = ''; // input 초기화
+                inputBox = null; // input 값 초기화
+                return false;
+            }
+
+            if(a == 'plus') { // plus 버튼 클릭 시
+                resultValue = resultValue + parseInt(inputBox);
+                
+            }else if(a == 'minus') { // minus 버튼 클릭 시
+                resultValue = resultValue - parseInt(inputBox);
+            }
+            result.innerHTML = resultValue;
+            document.getElementById('inputBox').value = ''; // input 초기화
+            inputBox = null; // input 값 초기화
+            resultArray.push(resultValue); // 결과 값 배열에 추가
+            i++; // 인덱스 증가
+        }
+
+        function undo() { // Undo 버튼 클릭 시
+            if(i == 0) {
+                resultValue = resultArray[0];
+                result.innerHTML = resultValue;
+            }else {
+                --i;
+                resultValue = resultArray[i];
+                result.innerHTML = resultValue;
+            }
+        }
+
+        function redo() { // Redo 버튼 클릭 시
+            if(i == (resultArray.length - 1)) {
+                resultValue = resultArray[i];
+                result.innerHTML = resultValue;
+            }else {
+                ++i;
+                resultValue = resultArray[i];
+                result.innerHTML = resultValue;
+            }
+        }
+    </script>
+</body>
+</html>
